@@ -103,6 +103,12 @@ let initialCode = `n(run(8))
 
 let textarea = document.getElementById("code");
 
+if (window.location.hash) {
+  textarea.value = atob(window.location.hash.slice(1));
+} else {
+  textarea.value = initialCode;
+}
+
 async function play() {
   await init;
   const it = await pattern2it(textarea.value, 8);
@@ -133,6 +139,7 @@ async function download() {
 
 textarea.addEventListener("keypress", (e) => {
   if (e.key === "Enter" && e.ctrlKey) {
+    window.location.hash = btoa(e.target.value);
     play();
   }
   if (e.key === "." && e.ctrlKey) {
