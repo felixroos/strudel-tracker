@@ -96,7 +96,7 @@ async function pattern2it(code, cycles) {
 let initialCode = `n(run(8))
 .chord("<Dm7 G7 C^7 <F^7 A7b9>>")
 .voicing()
-.s('sawtooth')
+.s("sine")
 .velocity(isaw.range(0.25, 0.75).fast(2))
 .jux(rev)
 .add(note("-12,0,12"))`;
