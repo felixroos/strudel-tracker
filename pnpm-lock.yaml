@@ -20,6 +20,9 @@ dependencies:
   '@strudel/webaudio':
     specifier: 1.0.1
     version: 1.0.1
+  chiptune3:
+    specifier: ^0.7.7
+    version: 0.7.7
   itwriter:
     specifier: ^0.0.1
     version: 0.0.1
@@ -678,6 +681,10 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+    dev: false
+
+  /chiptune3@0.7.7:
+    resolution: {integrity: sha512-IjrT1EaFRrfMuLnGLPGdga7jkuTKZenjit8uaaCA7XglminwbaeiP1umqQvYAzHfyI1uur4/oP6Q+e7ReFk38Q==}
     dev: false
 
   /chord-voicings@0.0.1:

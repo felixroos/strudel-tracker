@@ -36,21 +36,6 @@
     <button id="play">play</button>
     <button id="stop">stop</button>
     <script type="module" src="/main.js"></script>
-    <script type="text/javascript">
-      window["libopenmpt"] = {};
-      libopenmpt.onRuntimeInitialized = () => {
-        const player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
-        document.addEventListener("chiptune-play", async (e) => {
-          console.log("play..");
-          await player.context.resume();
-          player.play(e.detail);
-        });
-        document.addEventListener("chiptune-stop", (e) => player.stop());
-      };
-    </script>
-    <!-- note: had to remove Promise polyfill from libopenmpt.js to make it work with evalScope -->
-    <script src="chiptune2/libopenmpt.js"></script>
-    <script src="chiptune2/chiptune2.js"></script>
     <p>ctrl+enter = update+play, ctrl+. = stop</p>
     <p>only sine and sawtooth are available as sounds so far</p>
     <a href="https://github.com/felixroos/strudel-tracker">code</a>

@@ -4,35 +4,48 @@ import { midiToFreq, tokenizeNote, evalScope, controls } from "@strudel/core";
 import { midi2note } from "@strudel/tonal/tonleiter.mjs";
 import { buf, adsr, sin, saw } from "./dsp.js";
 import { evaluate } from "@strudel/transpiler";
+// import { ChiptuneJsPlayer } from "chiptune3/chiptune3.js";
+import { ChiptuneJsPlayer } from "https://DrSnuggles.github.io/chiptune/chiptune3.js";
 
-let init = evalScope(
-  controls,
-  import("@strudel/core"),
-  import("@strudel/mini"),
-  import("@strudel/tonal")
-);
+let chiptune;
+let init = Promise.all([
+  evalScope(
+    controls,
+    import("@strudel/core"),
+    import("@strudel/mini"),
+    import("@strudel/tonal")
+  ),
+  // first interaction policy...
+  new Promise((resolve) => {
+    document.addEventListener("click", function firstClick() {
+      chiptune = new ChiptuneJsPlayer();
+      chiptune.onInitialized(() => resolve());
+      document.removeEventListener("click", firstClick);
+    });
+  }),
+]);
 
-async function pattern2it(code, cycles) {
-  let f = midiToFreq(72); // 72 = c5 seems to match
-  const _sine = buf(1, (t) => sin(t, f) * adsr(t, 0.01, 0.1, 0.5, 0.1, 1));
-  const sawtooth = buf(1, (t) => saw(t, f) * adsr(t, 0.01, 0.1, 0.5, 0.1, 1));
-  const samples = [
-    {
-      // samples can be stereo or mono floating point format
-      filename: "sine.wav",
-      name: "sine",
-      samplerate: 44100,
-      channels: [_sine, _sine], // stereo
-    },
-    {
-      // samples can be stereo or mono floating point format
-      filename: "sawtooth.wav",
-      name: "sawtooth",
-      samplerate: 44100,
-      channels: [sawtooth, sawtooth], // stereo
-    },
-  ];
+let f = midiToFreq(72); // 72 = c5 seems to match
+const sine = buf(1, (t) => sin(t, f) * adsr(t, 0.01, 0.1, 0.5, 0.1, 1));
+const sawtooth = buf(1, (t) => saw(t, f) * adsr(t, 0.01, 0.1, 0.5, 0.1, 1));
+const samples = [
+  {
+    // samples can be stereo or mono floating point format
+    filename: "sine.wav",
+    name: "sine",
+    samplerate: 44100,
+    channels: [sine, sine], // stereo
+  },
+  {
+    // samples can be stereo or mono floating point format
+    filename: "sawtooth.wav",
+    name: "sawtooth",
+    samplerate: 44100,
+    channels: [sawtooth, sawtooth], // stereo
+  },
+];
 
+async function pattern2it(code, cycles, samples) {
   const { pattern } = await evaluate(code);
   const rowsPerCycle = 32;
   let ticks = 3; // ticks per row
@@ -111,21 +124,18 @@ if (window.location.hash) {
 
 async function play() {
   await init;
-  const it = await pattern2it(textarea.value, 8);
-  document.dispatchEvent(
-    new CustomEvent("chiptune-play", {
-      detail: it,
-    })
-  );
+  const it = await pattern2it(textarea.value, 8, samples);
+  await chiptune.context.resume();
+  chiptune.play(it);
 }
 
 function stop() {
-  document.dispatchEvent(new CustomEvent("chiptune-stop"));
+  chiptune.stop();
 }
 
 async function download() {
   await init;
-  const it = await pattern2it(textarea.value, 8);
+  const it = await pattern2it(textarea.value, 8, samples);
   console.log(it);
   const url = URL.createObjectURL(new Blob([it]));
   const link = document.createElement("a");
