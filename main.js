@@ -1,7 +1,6 @@
 // import fs from 'fs';
 import itwriter from "itwriter";
 import { midiToFreq, tokenizeNote, evalScope, controls } from "@strudel/core";
-import "@strudel/tonal";
 import { midi2note } from "@strudel/tonal/tonleiter.mjs";
 import { buf, adsr, sin, saw } from "./dsp.js";
 import { evaluate } from "@strudel/transpiler";
