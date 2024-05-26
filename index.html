@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>itwriter test</title>
+    <style>
+      body {
+        background-color: #121213;
+        color: white;
+      }
+      textarea {
+        padding: 10px;
+        color: white;
+        background-color: transparent;
+        outline: none;
+      }
+      a {
+        color: white;
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0">
+    <textarea id="code" style="width: 100%; height: 200px"></textarea>
+    <button id="download">download it</button>
+    <button id="play">play</button>
+    <button id="stop">stop</button>
+    <script
+      type="module"
+      src="/main.js
+    "
+    ></script>
+    <script type="text/javascript">
+      window["libopenmpt"] = {};
+      libopenmpt.onRuntimeInitialized = () => {
+        const player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
+        document.addEventListener("chiptune-play", async (e) => {
+          await player.context.resume();
+          player.play(e.detail);
+        });
+        document.addEventListener("chiptune-stop", (e) => player.stop());
+      };
+    </script>
+    <!-- note: had to remove Promise polyfill from libopenmpt.js to make it work with evalScope -->
+    <script type="text/javascript" src="chiptune2/libopenmpt.js"></script>
+    <script type="text/javascript" src="chiptune2/chiptune2.js"></script>
+    <p>ctrl+enter = update+play, ctrl+. = stop</p>
+    <p>only sine and sawtooth are available as sounds so far</p>
+  </body>
+</html>
